@@ -1,4 +1,8 @@
+extern crate base64;
+use base64::engine::general_purpose;
+use base64::Engine;
 use std::env;
+use std::{collections::HashMap, hash::Hash};
 use ulid::Ulid;
 
 use {once_cell::sync::Lazy, regex::Regex};
@@ -10,7 +14,7 @@ fn is_valid_url(potential_url: &str) -> bool {
     RE.is_match(potential_url)
 }
 
-fn generate_shortened_url(long_url: &str) -> String {
+fn generate_shortened_url() -> String {
     const SHORTENED_URL_PREFIX: &str = "https://eensy.url/";
 
     let uri_ulid = Ulid::new();
@@ -46,5 +50,9 @@ fn main() {
     // 3. ... wait for next steps
     // so how do you shorten a URL?
     // let me go very simple
-    println!("your eensy url is: {}", generate_shortened_url(long_url));
+    let short_url = generate_shortened_url().to_lowercase();
+
+    // 4. convert to base 64 using Engine
+    let b64 = general_purpose::STANDARD.encode(&short_url);
+    println!("your eensy url is: {}", b64);
 }
